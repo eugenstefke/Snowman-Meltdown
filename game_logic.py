@@ -1,12 +1,10 @@
 import random
+from ascii_art import STAGES
 
 # List of secret words
 WORDS = ["python", "git", "github", "snowman", "meltdown"]
 ALPHABETICAL_LETTERS = "abcdefghijklmnopqrstuvwxyz"
 ONLY_ONE_CHAR = 1
-
-
-from ascii_art import STAGES
 
 def get_random_word():
     """Selects a random word from the list."""
@@ -54,7 +52,6 @@ def play_game():
     mistakes = 0
     guessed_letters = []
     print("Welcome to Snowman Meltdown!")
-    print("Secret word selected: " + secret_word)  # for testing, later remove this line
 
     while True:
         display_game_state(mistakes, secret_word, guessed_letters)
