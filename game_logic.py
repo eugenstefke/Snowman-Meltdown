@@ -3,12 +3,10 @@ from ascii_art import STAGES
 
 # List of secret words
 WORDS = ["python", "git", "github", "snowman", "meltdown"]
-ALPHABETICAL_LETTERS = "abcdefghijklmnopqrstuvwxyz"
-ONLY_ONE_CHAR = 1
 
 def get_random_word():
     """Selects a random word from the list."""
-    return WORDS[random.randint(0, len(WORDS) - 1)]
+    return random.choice(WORDS)
 
 def display_game_state(mistakes, secret_word, guessed_letters):
     '''
@@ -28,57 +26,60 @@ def display_game_state(mistakes, secret_word, guessed_letters):
 
 def play_again():
     '''
-    asks the user if they would like to play again, restarts the game or ends the game
+    Asks the user if they would like to play again.
+    Returns True to play again, False to end the game.
     '''
     while True:
         print("\nDo you want play again")
         user_input = input("(Y/N)").lower().strip()
 
         if user_input == "y":
-            play_game()
+            return True
         elif user_input == "n":
             print("\nThank you for playing, Bye!")
-            raise SystemExit
+            return False
         else:
             print("\nEnter only Y or N ")
 
 def play_game():
     '''
-    Retrieves the user’s input of letters.
+    Retrieves the user's input of letters.
     Checks for incorrect attempts and determines whether the attempt is correct.
-    Calls the ‘play again’ function.
+    Loops until the user chooses not to play again.
     '''
-    secret_word = get_random_word()
-    mistakes = 0
-    guessed_letters = []
     print("Welcome to Snowman Meltdown!")
 
     while True:
-        display_game_state(mistakes, secret_word, guessed_letters)
+        secret_word = get_random_word()
+        mistakes = 0
+        guessed_letters = []
+        game_over = False
 
-        guess = input("Guess a letter: ").lower().strip()
+        while not game_over:
+            display_game_state(mistakes, secret_word, guessed_letters)
+            guess = input("Guess a letter: ").lower().strip()
 
-        if guess in ALPHABETICAL_LETTERS and len(guess) == ONLY_ONE_CHAR:
-            if guess in secret_word:
-                guessed_letters.append(guess)
+            if guess.isalpha() and len(guess) == 1:
+                if guess in secret_word:
+                    guessed_letters.append(guess)
+                else:
+                    mistakes += 1
+                    if mistakes == len(STAGES):
+                        print("""\n     ~~~~~~~\n    ~~~~~~~~""")
+                        print("\nGame Over! The snowman has melted")
+                        print(f"The word was: {secret_word}")
+                        game_over = True
 
-            if guess not in secret_word:
-                mistakes += 1
-                if mistakes == len(STAGES):
-                    print("""\n     ~~~~~~~\n    ~~~~~~~~""")
-                    print("\nGame Over! The snowman has melted")
-                    print(f"The word was: {secret_word}")
-                    play_again()
+                if not game_over and all(char in guessed_letters for char in secret_word):
+                    print(f"\n{secret_word}, correct")
+                    print("Congratulations, you saved the snowman!")
+                    game_over = True
 
-            if all(char in guessed_letters for char in secret_word):
-                print(f"\n{secret_word}, correct")
-                print("Congratulations, you saved the snowman!")
-                play_again()
-        else:
-            print("\nPlease enter just ONE ALPHABETICAL letter!")
+                if not game_over:
+                    print("You guessed:", guess)
+            else:
+                print("\nPlease enter just ONE ALPHABETICAL letter!")
 
-        print("You guessed:", guess)
+        if not play_again():
+            break
 
-
-if __name__ == "__main__":
-    play_game()
